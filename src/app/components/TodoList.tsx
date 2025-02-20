@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import TodoItem from "./TodoItem"
 import AddTodoForm from "./AddTodoFrm"
 
-
 interface Todo {
   id: number
   text: string
