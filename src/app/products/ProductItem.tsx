@@ -10,11 +10,13 @@ interface ProductItemProps {
   product: Product
   isFavorite: boolean
   onFavoriteToggle: () => void
+  onDelete: (productId: number) => void
 }
 
-export default function ProductItem({ product, isFavorite, onFavoriteToggle }: ProductItemProps) {
+export default function ProductItem({ product, isFavorite, onFavoriteToggle, onDelete }: ProductItemProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const handleEdit = async (formData: FormData) => {
     await clientEditProduct(formData)
@@ -22,7 +24,15 @@ export default function ProductItem({ product, isFavorite, onFavoriteToggle }: P
   }
 
   const handleDelete = async (formData: FormData) => {
-    await clientDeleteProduct(formData)
+    try {
+      setIsDeleting(true)
+      await clientDeleteProduct(formData)
+      onDelete(product.id)
+    } catch (error) {
+      console.error("Failed to delete product:", error)
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
   return (
@@ -140,8 +150,8 @@ export default function ProductItem({ product, isFavorite, onFavoriteToggle }: P
             </button>
             <form action={handleDelete} className="inline">
               <input type="hidden" name="id" value={product.id} />
-              <button type="submit" className="bg-red-500 text-white px-4 py-2 rounded">
-                Delete
+              <button type="submit" className="bg-red-500 text-white px-4 py-2 rounded" disabled={isDeleting}>
+                {isDeleting ? "Deleting..." : "Delete"}
               </button>
             </form>
             <button onClick={() => setShowDetails(true)} className="bg-blue-500 text-white px-4 py-2 rounded">
@@ -151,7 +161,7 @@ export default function ProductItem({ product, isFavorite, onFavoriteToggle }: P
         </div>
       )}
       {showDetails && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
             <h2 className="text-2xl font-bold mb-4">{product.name}</h2>
             <Image

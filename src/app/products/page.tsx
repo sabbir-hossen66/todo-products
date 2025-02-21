@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { getProducts, type Product } from "../actions"
 import ProductItem from "./ProductItem"
 import { useRouter } from "next/navigation"
-import { getFavorites, getProducts, Product } from "../actions"
 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([])
@@ -18,13 +18,17 @@ export default function ProductList() {
     const fetchProducts = async () => {
       setIsLoading(true)
       const fetchedProducts = await getProducts()
-      const fetchedFavorites = await getFavorites()
+      const fetchedFavorites = JSON.parse(localStorage.getItem("favorites") || "[]")
       setProducts(fetchedProducts)
       setFavorites(fetchedFavorites)
       setIsLoading(false)
     }
     fetchProducts()
   }, [])
+
+  const handleDeleteProduct = (productId: number) => {
+    setProducts(products.filter((p) => p.id !== productId))
+  }
 
   const categories = [...new Set(products.map((p) => p.category))]
 
@@ -78,6 +82,7 @@ export default function ProductList() {
                 setFavorites(newFavorites)
                 localStorage.setItem("favorites", JSON.stringify(newFavorites))
               }}
+              onDelete={handleDeleteProduct}
             />
           ))}
         </ul>
