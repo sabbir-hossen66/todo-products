@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { addProduct } from "../actions"
+import Link from "next/link"
+
 
 export default function AddProduct() {
   const router = useRouter()
@@ -35,7 +37,7 @@ export default function AddProduct() {
           <label htmlFor="price" className="block mb-2">
             Price
           </label>
-          <input type="number" id="price" name="price" step="0.01" className="w-full p-2 border rounded" required />
+          <input type="number" id="price" name="price" placeholder="$" step="0.01" className="w-full p-2 border rounded" required />
         </div>
         <div>
           <label htmlFor="image" className="block mb-2">
@@ -63,6 +65,10 @@ export default function AddProduct() {
           {isSubmitting ? "Adding..." : "Add Product"}
         </button>
       </form>
+      <div>
+        <Link href="/" className="text-blue-500 hover:underline">
+          <button className="p-2 bg-orange-400 text-white font-semibold rounded mt-4">Back to Home</button>      </Link>
+      </div>
     </div>
   )
 }

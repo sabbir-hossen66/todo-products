@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { getProducts, type Product } from "../actions"
 import ProductItem from "./ProductItem"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
+
 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([])
@@ -13,6 +15,7 @@ export default function ProductList() {
   const [favorites, setFavorites] = useState<number[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
+  console.log('router', router)
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -87,6 +90,15 @@ export default function ProductList() {
           ))}
         </ul>
       )}
+      <div className="flex justify-center mt-4 space-x-4">
+        
+      <Link href={'/addProduct'}>
+      <button className="p-3 bg-blue-500 text-white font-semibold rounded">Back to Add</button>
+        </Link>
+        <Link href={'/'}>
+        <button className="p-3 bg-blue-500 text-white font-semibold rounded">Go Home</button>
+        </Link>
+</div>
     </div>
   )
 }
