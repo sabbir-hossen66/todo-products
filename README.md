@@ -39,8 +39,6 @@ Follow these steps to set up the project locally:
    ```
 5. Open **http://localhost:3000** in your browser.
 
-## 🖥️ Screenshots
-![Todo CRUD App Screenshot](https://via.placeholder.com/1200x600?text=App+Screenshot)
 
 ## 🏗️ Future Enhancements
 - ✅ Implement filtering and sorting features
