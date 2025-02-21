@@ -23,7 +23,7 @@ Follow these steps to set up the project locally:
 
 1. **Clone the repository**
    ```bash
-   git clone <repository_url>
+   git clone <[repository_ur](https://github.com/sabbir-hossen66/todo-products.git)l>
    ```
 2. **Navigate to the project folder**
    ```bash
@@ -44,15 +44,11 @@ Follow these steps to set up the project locally:
 
 ## 🏗️ Future Enhancements
 - ✅ Implement filtering and sorting features
-- ✅ Add authentication for user-specific tasks
-- ✅ Improve UI with animations
+- ✅ Implement localstorage 
+- ✅ Implement dark theme with localstorage
 
-## 🤝 Contributing
-Feel free to fork this repository and submit pull requests to improve the project!
 
-## 📜 License
-This project is **open-source** and free to use.
 
 ---
-Developed with ❤️ by **[Your Name]**
+Developed with ❤️ by **[Sabbir Hossen]**
 
