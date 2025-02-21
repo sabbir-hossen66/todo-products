@@ -4,8 +4,8 @@ import { useState, useEffect } from "react"
 import { getProducts, type Product } from "../actions"
 import ProductItem from "./ProductItem"
 import { useRouter } from "next/navigation"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
-
 
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([])
@@ -14,8 +14,10 @@ export default function ProductList() {
   const [sortOrder, setSortOrder] = useState("")
   const [favorites, setFavorites] = useState<number[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [currentPage, setCurrentPage] = useState(1)
+  const productsPerPage = 3
   const router = useRouter()
-  console.log('router', router)
+   console.log(router)
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -43,6 +45,14 @@ export default function ProductList() {
       if (sortOrder === "desc") return b.price - a.price
       return 0
     })
+
+  const indexOfLastProduct = currentPage * productsPerPage
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
+
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage)
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber)
 
   return (
     <div className="container mx-auto p-4">
@@ -72,25 +82,46 @@ export default function ProductList() {
       {isLoading ? (
         <div>Loading...</div>
       ) : (
-        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredProducts.map((product) => (
-            <ProductItem
-              key={product.id}
-              product={product}
-              isFavorite={favorites.includes(product.id)}
-              onFavoriteToggle={() => {
-                const newFavorites = favorites.includes(product.id)
-                  ? favorites.filter((id) => id !== product.id)
-                  : [...favorites, product.id]
-                setFavorites(newFavorites)
-                localStorage.setItem("favorites", JSON.stringify(newFavorites))
-              }}
-              onDelete={handleDeleteProduct}
-            />
-          ))}
-        </ul>
+        <>
+          <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {currentProducts.map((product) => (
+              <ProductItem
+                key={product.id}
+                product={product}
+                isFavorite={favorites.includes(product.id)}
+                onFavoriteToggle={() => {
+                  const newFavorites = favorites.includes(product.id)
+                    ? favorites.filter((id) => id !== product.id)
+                    : [...favorites, product.id]
+                  setFavorites(newFavorites)
+                  localStorage.setItem("favorites", JSON.stringify(newFavorites))
+                }}
+                onDelete={handleDeleteProduct}
+              />
+            ))}
+          </ul>
+          <div className="mt-4 flex justify-center items-center space-x-2">
+            <button
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="p-2 border rounded disabled:opacity-50"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <span>
+              {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="p-2 border rounded disabled:opacity-50"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </>
       )}
-      <div className="flex justify-center mt-4 space-x-4">
+         <div className="flex justify-center mt-4 space-x-4">
         
       <Link href={'/addProduct'}>
       <button className="p-3 bg-blue-500 text-white font-semibold rounded">Back to Add</button>
