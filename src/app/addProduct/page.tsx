@@ -43,7 +43,7 @@ export default function AddProduct() {
           <label htmlFor="image" className="block mb-2">
             Image URL
           </label>
-          <input type="url" id="image" name="image" className="w-full p-2 border rounded" required />
+          <input type="url" id="image" name="image" placeholder="set any image url" className="w-full p-2 border rounded" required />
         </div>
         <div>
           <label htmlFor="category" className="block mb-2">

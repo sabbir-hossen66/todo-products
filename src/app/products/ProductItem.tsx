@@ -4,7 +4,7 @@ import { useState } from "react"
 import { clientEditProduct, clientDeleteProduct } from "../clientActions"
 import Image from "next/image"
 import type { Product } from "../actions"
-import { Heart } from "lucide-react"
+import { Heart, ImageIcon } from "lucide-react"
 
 interface ProductItemProps {
   product: Product
@@ -17,10 +17,12 @@ export default function ProductItem({ product, isFavorite, onFavoriteToggle, onD
   const [isEditing, setIsEditing] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [imageError, setImageError] = useState(false)
 
   const handleEdit = async (formData: FormData) => {
     await clientEditProduct(formData)
     setIsEditing(false)
+    setImageError(false) // Reset image error state after edit
   }
 
   const handleDelete = async (formData: FormData) => {
@@ -33,6 +35,10 @@ export default function ProductItem({ product, isFavorite, onFavoriteToggle, onD
     } finally {
       setIsDeleting(false)
     }
+  }
+
+  const handleImageError = () => {
+    setImageError(true)
   }
 
   return (
@@ -77,8 +83,10 @@ export default function ProductItem({ product, isFavorite, onFavoriteToggle, onD
               name="image"
               defaultValue={product.image}
               className="w-full p-2 border rounded"
+              placeholder="Enter any image URL"
               required
             />
+            <p className="text-sm text-gray-500 mt-1">You can paste any image URL here</p>
           </div>
           <div>
             <label htmlFor="category" className="block mb-2">
@@ -125,17 +133,21 @@ export default function ProductItem({ product, isFavorite, onFavoriteToggle, onD
       ) : (
         <div>
           <div className="relative">
-            <Image
-              src={product.image || "/placeholder.svg"}
-              alt={product.name}
-              width={200}
-              height={200}
-              className="w-full h-48 object-cover mb-2 rounded"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement
-                target.src = "/placeholder.svg"
-              }}
-            />
+            {imageError ? (
+              <div className="w-full h-48 bg-gray-100 flex items-center justify-center rounded">
+                <ImageIcon className="w-12 h-12 text-gray-400" />
+              </div>
+            ) : (
+              <Image
+                src={product.image || "/placeholder.svg"}
+                alt={product.name}
+                width={200}
+                height={200}
+                className="w-full h-48 object-cover mb-2 rounded"
+                onError={handleImageError}
+                unoptimized
+              />
+            )}
             <button onClick={onFavoriteToggle} className="absolute top-2 right-2 bg-white rounded-full p-1">
               <Heart className={`w-6 h-6 ${isFavorite ? "fill-red-500 text-red-500" : "text-gray-500"}`} />
             </button>
@@ -164,13 +176,21 @@ export default function ProductItem({ product, isFavorite, onFavoriteToggle, onD
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white p-6 rounded-lg max-w-lg w-full">
             <h2 className="text-2xl font-bold mb-4">{product.name}</h2>
-            <Image
-              src={product.image || "/placeholder.svg"}
-              alt={product.name}
-              width={400}
-              height={400}
-              className="w-full h-64 object-cover mb-4 rounded"
-            />
+            {imageError ? (
+              <div className="w-full h-64 bg-gray-100 flex items-center justify-center rounded">
+                <ImageIcon className="w-16 h-16 text-gray-400" />
+              </div>
+            ) : (
+              <Image
+                src={product.image || "/placeholder.svg"}
+                alt={product.name}
+                width={400}
+                height={400}
+                className="w-full h-64 object-cover mb-4 rounded"
+                onError={handleImageError}
+                unoptimized
+              />
+            )}
             <p className="mb-2">
               <strong>Price:</strong> ${product.price.toFixed(2)}
             </p>
